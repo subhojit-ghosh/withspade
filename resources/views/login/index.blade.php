@@ -97,7 +97,13 @@
                             } else {
                                 showToast(data.message);
                                 if (data.two_step) {
-                                    location.href = "{{ route('login.two_step') }}";
+                                    if (data.two_step_method == 'email') {
+                                        location.href =
+                                            "{{ route('login.two_step_email') }}";
+                                    }
+                                    if (data.two_step_method == 'google2fa') {
+                                        location.href = "{{ route('login.two_step_google2fa') }}";
+                                    }
                                 } else {
                                     location.href = "{{ route('dashboard.index') }}";
                                 }

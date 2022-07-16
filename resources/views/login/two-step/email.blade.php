@@ -53,7 +53,7 @@
 
                 async submit() {
                     this.loading = true;
-                    fetch("{{ route('login.verify') }}", {
+                    fetch("{{ route('login.verify_email') }}", {
                             method: 'POST',
                             headers: {
                                 'X-CSRF-TOKEN': "{{ csrf_token() }}",
@@ -71,7 +71,7 @@
                                 showToast(data.message, 'error');
                             } else {
                                 showToast(data.message);
-                                location.href = "{{route('dashboard.index')}}";
+                                location.href = "{{ route('dashboard.index') }}";
                             }
                         })
                         .catch((err) => {

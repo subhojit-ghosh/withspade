@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('email');
             $table->boolean('two_step')->default(false);
             $table->string('two_step_identifier')->nullable();
+            $table->string('two_step_method')->default('email');
+            $table->string('google2fa_secret')->nullable();
+            $table->boolean('google2fa_verified')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

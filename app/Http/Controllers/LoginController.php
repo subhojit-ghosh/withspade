@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use PragmaRX\Google2FAQRCode\Google2FA;
 
 class LoginController extends Controller
 {
@@ -36,15 +37,23 @@ class LoginController extends Controller
             $user->two_step_identifier = $identifier;
             $user->save();
 
-            $otp = new Otp;
-            $otp->code = random_int(100000, 999999);
-            $otp->two_step_identifier = $identifier;
-            $otp->save();
-
-            Mail::to($user)->send(new LoginVerificationCode($otp->code));
-
             $request->session()->put('two_step_identifier', $identifier);
-            return response()->json(['message' => 'Login success', 'two_step' => true], 200);
+
+            if ($user->two_step_method == 'email') {
+                $otp = new Otp;
+                $otp->code = random_int(100000, 999999);
+                $otp->two_step_identifier = $identifier;
+                $otp->save();
+
+                Mail::to($user)->send(new LoginVerificationCode($otp->code));
+
+                return response()->json(['message' => 'Complete 2FA', 'two_step' => true, 'two_step_method' => 'email'], 200);
+            }
+
+            if ($user->two_step_method == 'google2fa') {
+
+                return response()->json(['message' => 'Complete 2FA', 'two_step' => true, 'two_step_method' => 'google2fa'], 200);
+            }
         } else {
             $loginAttempt = Auth::attempt([
                 'email' => $request->email,
@@ -60,17 +69,18 @@ class LoginController extends Controller
         }
     }
 
-    public function two_step(Request $request)
+    public function two_step_email(Request $request)
     {
         if ($request->session()->has('two_step_identifier')) {
-            return view('login.two-step');
+            return view('login.two-step.email');
         } else {
             return redirect()->route('login.index');
         }
     }
 
-    public function verify(Request $request)
+    public function verify_email(Request $request)
     {
+
         $request->validate([
             'otp' => ['required']
         ]);
@@ -84,6 +94,45 @@ class LoginController extends Controller
         $user = User::where('two_step_identifier', $otp->two_step_identifier)->first();
 
         if (!$user) {
+            return response()->json(['message' => 'Invalid varification code'], 400);
+        }
+
+        $loginAttempt = Auth::loginUsingId($user->id, true);
+
+        if ($loginAttempt) {
+            $request->session()->forget('two_step_identifier');
+            $request->session()->regenerate();
+            return response()->json(['message' => 'Login success'], 200);
+        } else {
+            return response()->json(['message' => 'Invalid login credentials'], 400);
+        }
+    }
+
+    public function two_step_google2fa(Request $request)
+    {
+        if ($request->session()->has('two_step_identifier')) {
+            return view('login.two-step.google2fa');
+        } else {
+            return redirect()->route('login.index');
+        }
+    }
+
+    public function verify_google2fa(Request $request)
+    {
+        $request->validate([
+            'secret' => ['required']
+        ]);
+
+        $user = User::where('two_step_identifier', $request->session()->get('two_step_identifier'))->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Invalid varification code'], 400);
+        }
+
+        $google2fa = new Google2FA();
+        $valid = $google2fa->verifyKey($user->google2fa_secret, $request->secret);
+
+        if (!$valid) {
             return response()->json(['message' => 'Invalid varification code'], 400);
         }
 

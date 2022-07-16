@@ -23,8 +23,10 @@ Route::middleware('guest')->group(function () {
     Route::prefix('login')->name('login.')->controller(LoginController::class)->group(function () {
         Route::get('/', 'index')->name('index');
         Route::post('/', 'login')->name('login');
-        Route::get('/two_step', 'two_step')->name('two_step');
-        Route::post('/verify', 'verify')->name('verify');
+        Route::get('/two_step_email', 'two_step_email')->name('two_step_email');
+        Route::post('/verify_email', 'verify_email')->name('verify_email');
+        Route::get('/two_step_google2fa', 'two_step_google2fa')->name('two_step_google2fa');
+        Route::post('/verify_google2fa', 'verify_google2fa')->name('verify_google2fa');
     });
 });
 
@@ -33,5 +35,6 @@ Route::middleware('auth')->group(function () {
         Route::get('/', 'index')->name('index');
         Route::get('/logout', 'logout')->name('logout');
         Route::post('/update', 'update')->name('update');
+        Route::post('/verify-google2fa', 'verify_google2fa')->name('verify-google2fa');
     });
 });
