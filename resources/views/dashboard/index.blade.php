@@ -50,7 +50,7 @@
                 @endif
             </p>
             <p class="text-2xl font-bold">Set up Google Authenticator</p>
-            <p class="text-lg">Set up your two factor authentication by scanning the barcode below. Alternatively, you can
+            <p class="text-lg">Set up your two factor authentication by scanning the QR below. Alternatively, you can
                 use the code
                 <code>{{ $secret }}</code>
             </p>
