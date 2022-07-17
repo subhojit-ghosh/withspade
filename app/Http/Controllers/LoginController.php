@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use PragmaRX\Google2FAQRCode\Google2FA;
+use Twilio\Rest\Client;
 
 class LoginController extends Controller
 {
@@ -50,6 +51,24 @@ class LoginController extends Controller
                 return response()->json(['message' => 'Complete 2FA', 'two_step' => true, 'two_step_method' => 'email'], 200);
             }
 
+            if ($user->two_step_method == 'mobile') {
+                $otp = new Otp;
+                $otp->code = random_int(100000, 999999);
+                $otp->two_step_identifier = $identifier;
+                $otp->save();
+
+                $twilio = new Client(env('TWILIO_SID'), env('TWILIO_AUTH_TOKEN'));
+                $twilio->messages->create(
+                    $user->mobile,
+                    [
+                        'from' => env('TWILIO_AUTH_NUMBER'),
+                        'body' => 'Your login verification code is ' . $otp->code
+                    ]
+                );
+
+                return response()->json(['message' => 'Complete 2FA', 'two_step' => true, 'two_step_method' => 'mobile'], 200);
+            }
+
             if ($user->two_step_method == 'google2fa') {
 
                 return response()->json(['message' => 'Complete 2FA', 'two_step' => true, 'two_step_method' => 'google2fa'], 200);
@@ -79,6 +98,45 @@ class LoginController extends Controller
     }
 
     public function verify_email(Request $request)
+    {
+
+        $request->validate([
+            'otp' => ['required']
+        ]);
+
+        $otp = Otp::where('two_step_identifier', $request->session()->get('two_step_identifier'))->where('code', $request->otp)->first();
+
+        if (!$otp) {
+            return response()->json(['message' => 'Invalid varification code'], 400);
+        }
+
+        $user = User::where('two_step_identifier', $otp->two_step_identifier)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Invalid varification code'], 400);
+        }
+
+        $loginAttempt = Auth::loginUsingId($user->id, true);
+
+        if ($loginAttempt) {
+            $request->session()->forget('two_step_identifier');
+            $request->session()->regenerate();
+            return response()->json(['message' => 'Login success'], 200);
+        } else {
+            return response()->json(['message' => 'Invalid login credentials'], 400);
+        }
+    }
+
+    public function two_step_mobile(Request $request)
+    {
+        if ($request->session()->has('two_step_identifier')) {
+            return view('login.two-step.mobile');
+        } else {
+            return redirect()->route('login.index');
+        }
+    }
+
+    public function verify_mobile(Request $request)
     {
 
         $request->validate([

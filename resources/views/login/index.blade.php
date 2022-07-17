@@ -101,8 +101,13 @@
                                         location.href =
                                             "{{ route('login.two_step_email') }}";
                                     }
+                                    if (data.two_step_method == 'mobile') {
+                                        location.href =
+                                            "{{ route('login.two_step_mobile') }}";
+                                    }
                                     if (data.two_step_method == 'google2fa') {
-                                        location.href = "{{ route('login.two_step_google2fa') }}";
+                                        location.href =
+                                            "{{ route('login.two_step_google2fa') }}";
                                     }
                                 } else {
                                     location.href = "{{ route('dashboard.index') }}";

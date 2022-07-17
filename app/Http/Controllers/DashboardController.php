@@ -46,6 +46,7 @@ class DashboardController extends Controller
     {
         $user = User::find(Auth::id());
         $user->two_step = $request->two_step == 'on';
+        $user->mobile = $request->mobile;
         $user->two_step_method = $request->two_step_method;
         $user->save();
 

@@ -25,6 +25,8 @@ Route::middleware('guest')->group(function () {
         Route::post('/', 'login')->name('login');
         Route::get('/two_step_email', 'two_step_email')->name('two_step_email');
         Route::post('/verify_email', 'verify_email')->name('verify_email');
+        Route::get('/two_step_mobile', 'two_step_mobile')->name('two_step_mobile');
+        Route::post('/verify_mobile', 'verify_mobile')->name('verify_mobile');
         Route::get('/two_step_google2fa', 'two_step_google2fa')->name('two_step_google2fa');
         Route::post('/verify_google2fa', 'verify_google2fa')->name('verify_google2fa');
     });

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email');
+            $table->string('mobile')->nullable();
             $table->boolean('two_step')->default(false);
             $table->string('two_step_identifier')->nullable();
             $table->string('two_step_method')->default('email');

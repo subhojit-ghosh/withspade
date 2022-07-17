@@ -19,6 +19,13 @@
                 </span>
             </label>
 
+            <p class="mt-10">Mobile number (with country code)</p>
+            <input type="text"
+                class=" rounded-lg border mt-5 flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                placeholder="Ex: +14842634786" value="{{ auth()->user()->mobile }}" name="mobile" required
+                minlength="12" />
+
+
             <p class="mt-10">Choose two step verification method</p>
 
             <select
@@ -26,6 +33,9 @@
                 name="two_step_method">
                 <option value="email" {{ auth()->user()->two_step_method == 'email' ? 'selected' : '' }}>
                     Email
+                </option>
+                <option value="mobile" {{ auth()->user()->two_step_method == 'mobile' ? 'selected' : '' }}>
+                    Mobile
                 </option>
                 <option value="google2fa" {{ auth()->user()->two_step_method == 'google2fa' ? 'selected' : '' }}
                     {{ auth()->user()->google2fa_verified ? '' : 'disabled' }}>
