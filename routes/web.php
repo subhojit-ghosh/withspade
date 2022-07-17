@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('notification')->name('notification.')->controller(NotificationController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('/send', 'send')->name('send');
+    Route::post('/mark-all-read', 'mark_all_read')->name('mark-all-read');
 });
 
 Route::middleware('guest')->group(function () {

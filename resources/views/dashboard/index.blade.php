@@ -10,6 +10,56 @@
             Logout
         </a>
 
+        <div class="my-5">
+            <div class="float-right relative -top-14">
+                <div x-data="{ open: false }">
+                    <button @click="open = !open;markAllRead($data.open)"
+                        class="p-1 rounded-full focus:outline-none lg:text-loom"><span class="sr-only">View
+                            notifications</span><svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                        @if (auth()->user()->unreadNotifications->count() > 0)
+                            <span
+                                class="relative -top-8 -right-3 px-2 py-1 text-sm rounded-full bg-indigo-600 text-white">{{ auth()->user()->unreadNotifications->count() }}</span>
+                        @endif
+
+                    </button>
+                    <div x-show="open"
+                        class="hidden lg:block origin-top-right absolute right-0 mt-4 w-96 py-8 px-2 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
+                        @click.outside="open = false" style="display: none;">
+                        <div class="flow-root">
+                            <ul role="list" class="-my-5 divide-y divide-gray-200">
+                                @foreach (auth()->user()->notifications as $notification)
+                                    <li class="py-5 px-4 rounded-md {{ $notification->read_at ? '' : 'bg-blue-100' }}">
+                                        <div class="relative focus-within:ring-2 focus-within:ring-indigo-500">
+                                            <h3 class="text-sm font-semibold text-gray-800"><a
+                                                    href="{{ $notification->data['link'] }}"
+                                                    class="hover:underline focus:outline-none">{{ $notification->data['title'] }}</a>
+                                            </h3>
+                                            <p class="mt-1 text-sm text-gray-600 line-clamp-2">
+                                                {{ $notification->data['message'] }}
+                                            </p>
+                                        </div>
+                                    </li>
+                                @endforeach
+                                @if (count(auth()->user()->notifications) == 0)
+                                    <li class="py-5">
+                                        <div class="relative focus-within:ring-2 focus-within:ring-indigo-500">
+                                            <h3 class="text-sm font-semibold text-gray-800">You don't have any notifications
+                                            </h3>
+                                        </div>
+                                    </li>
+                                @endif
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <form action="{{ route('dashboard.update') }}" method="POST" class="mb-10 border border-4 rounded-lg my-10 p-10">
             @csrf
             <label class="flex items-center space-x-3 cursor-pointer">
@@ -123,6 +173,22 @@
                         });
                 }
             }))
-        })
+        });
+
+        function markAllRead(flag) {
+            if (flag) {
+                fetch("{{ route('notification.mark-all-read') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}",
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({})
+                    })
+                    .then(async res => {})
+                    .catch((err) => {});
+            }
+        }
     </script>
 @endpush
