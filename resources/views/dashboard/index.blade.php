@@ -49,14 +49,14 @@
                     <span class="text-red-500">Setup Not Done</span>
                 @endif
             </p>
-            <p class="text-2xl font-bold">Set up Google Authenticator</p>
+            <p class="text-2xl font-bold">Set up Authenticator</p>
             <p class="text-lg">Set up your two factor authentication by scanning the QR code below. Alternatively, you can
                 use the code
                 <code>{{ $secret }}</code>
             </p>
             {!! $inlineUrl !!}
 
-            <p class="mt-10">Enter the code you see on the Google Authenticator app</p>
+            <p class="mt-10">Enter the code you see on the Authenticator app</p>
             <input type="text"
                 class=" rounded-lg border mt-5 flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                 placeholder="Enter code to verify" x-model="secret" required />

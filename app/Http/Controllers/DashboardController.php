@@ -26,7 +26,7 @@ class DashboardController extends Controller
 
         $inlineUrl = $google2fa->getQRCodeInline(
             'TestWithspade',
-            'test@withspade.com',
+            $user->email,
             $user->google2fa_secret
         );
 
