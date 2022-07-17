@@ -30,10 +30,7 @@ class DashboardController extends Controller
             $user->google2fa_secret
         );
 
-        $secret = $user->google2fa_secret;
-
-
-        return view('dashboard.index', compact('inlineUrl', 'secret'));
+        return view('dashboard.index', compact('inlineUrl'));
     }
 
     public function logout(Request $request)

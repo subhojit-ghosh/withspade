@@ -50,9 +50,7 @@
                 @endif
             </p>
             <p class="text-2xl font-bold">Set up Authenticator</p>
-            <p class="text-lg">Set up your two factor authentication by scanning the QR code below. Alternatively, you can
-                use the code
-                <code>{{ $secret }}</code>
+            <p class="text-lg">Set up your two factor authentication by scanning the QR code below.
             </p>
             {!! $inlineUrl !!}
 
