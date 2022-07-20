@@ -3,6 +3,8 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Team\TeamDashboardController;
+use App\Http\Controllers\Team\TeamLoginController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,5 +47,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/logout', 'logout')->name('logout');
         Route::post('/update', 'update')->name('update');
         Route::post('/verify-google2fa', 'verify_google2fa')->name('verify-google2fa');
+    });
+});
+
+Route::prefix('team')->name('team.')->group(function () {
+    Route::middleware('guest:team')->group(function () {
+        Route::prefix('login')->name('login.')->controller(TeamLoginController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'login')->name('login');
+        });
+    });
+
+    Route::middleware('auth:team')->group(function () {
+        Route::prefix('dashboard')->name('dashboard.')->controller(TeamDashboardController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/logout', 'logout')->name('logout');
+        });
     });
 });
