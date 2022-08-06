@@ -60,6 +60,8 @@
             </div>
         </div>
 
+        <p>Last active: {{ auth()->user()->last_active }}</p>
+
         <form action="{{ route('dashboard.update') }}" method="POST" class="mb-10 border border-4 rounded-lg my-10 p-10">
             @csrf
             <label class="flex items-center space-x-3 cursor-pointer">
