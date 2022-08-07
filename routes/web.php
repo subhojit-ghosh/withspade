@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\NotificationController;
@@ -20,6 +21,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::prefix('blog')->name('blog.')->controller(BlogController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/{slug}', 'detail')->name('detail');
 });
 
 Route::prefix('notification')->name('notification.')->controller(NotificationController::class)->group(function () {
